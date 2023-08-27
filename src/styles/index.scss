@@ -299,6 +299,17 @@ span.balloon-item {
   margin-top: 115px;
 }
 
+.player {
+  position: fixed;
+  top: 30px;
+  //right: 30px;
+  width: 5%;
+  img {
+    max-width: 100%;
+    cursor: pointer;
+  }
+}
+
 @keyframes animateText {
   0%,
   100% {
