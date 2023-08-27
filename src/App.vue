@@ -40,6 +40,7 @@
       </div>
       <div v-else>
         <p class="text-notice-mobile">Hãy truy cập bằng Laptop</p>
+        <p class="text-notice-mobile">Anh Yêu Em. Nhớ em lắm :((((</p>
         <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@strongerz123/video/7099477247031135494"
                     data-video-id="7099477247031135494"
                     style="max-width: 605px;min-width: 325px;" >
