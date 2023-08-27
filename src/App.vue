@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="player">
+    <div v-if="!isMobile" class="player">
       <av-circle
           playtime-color="#DB485E"
           audio-class="audio-class fade-out-collapse"
@@ -40,6 +40,19 @@
       </div>
       <div v-else>
         <p class="text-notice-mobile">Hãy truy cập bằng Laptop</p>
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@strongerz123/video/7099477247031135494"
+                    data-video-id="7099477247031135494"
+                    style="max-width: 605px;min-width: 325px;" >
+          <section> <a target="_blank" title="@strongerz123" href="https://www.tiktok.com/@strongerz123?refer=embed">@strongerz123</a>
+            𝑮𝒓𝒆𝒆𝒕𝒊𝒏𝒈𝒔, 𝑲𝒊𝒏𝒈𝒔 𝑨𝒏𝒅 𝑸𝒖𝒆𝒆𝒏𝒔. HAPPY BIRTHDAY TO YOU!
+            <a title="happybirthday" target="_blank" href="https://www.tiktok.com/tag/happybirthday?refer=embed">#happybirthday</a>
+            <a title="song" target="_blank" href="https://www.tiktok.com/tag/song?refer=embed">#song</a>
+            <a title="singing" target="_blank" href="https://www.tiktok.com/tag/singing?refer=embed">#singing</a>
+            <a title="funny" target="_blank" href="https://www.tiktok.com/tag/funny?refer=embed">#funny</a>
+            <a title="happybirthdaytoyou" target="_blank" href="https://www.tiktok.com/tag/happybirthdaytoyou?refer=embed">#happybirthdaytoyou</a>
+            <a target="_blank" title="♬ original sound - Jason.JaySmooth.@strongy2014."
+               href="https://www.tiktok.com/music/original-sound-7099477236189514501?refer=embed">♬ original sound - Jason.JaySmooth.@strongy2014.</a>
+          </section> </blockquote>
       </div>
     </div>
     <div v-else>
