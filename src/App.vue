@@ -1,18 +1,5 @@
 <template>
   <div id="app">
-    <div v-if="!isMobile" class="player">
-      <av-circle
-          playtime-color="#DB485E"
-          audio-class="audio-class fade-out-collapse"
-          canv-class="canvas-audio"
-          :playtime="true"
-          progress-color="#DB485E"
-          bar-color="#F75A71"
-          :audio-src="audioFile"
-          @playing="playing"
-          @ended="end"
-      ></av-circle>
-    </div>
     <div v-if="!expired">
       <div v-if="!isMobile" class="container-page">
         <div class="balloon">
@@ -36,46 +23,74 @@
           <img src="https://static.xx.fbcdn.net/images/emoji.php/v9/tc4/1/30/1f389.png" class="icon-birthday" alt="icon">
         </div>
         <CountDown @timeRemaining="timeRemaining"/>
-        <img src="https://scontent.xx.fbcdn.net/v/t39.1997-6/10935977_1435051876785769_939426339_n.webp?_nc_cat=1&ccb=1-7&_nc_sid=0572db&_nc_ohc=NpyPdUQPF0wAX9_auYx&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=00_AfCW2d6Jt58L-tG10VrjRA-S7NjK2oLGfbIF2o_1osTN7w&oe=64F052E9" class="img-final">
       </div>
       <div v-else>
-        <p class="text-notice-mobile">Hãy truy cập bằng Laptop</p>
-        <p class="text-notice-mobile">Anh Yêu Em. Nhớ em lắm :((((</p>
-        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@strongerz123/video/7099477247031135494"
-                    data-video-id="7099477247031135494"
-                    style="max-width: 605px;min-width: 325px;" >
-          <section> <a target="_blank" title="@strongerz123" href="https://www.tiktok.com/@strongerz123?refer=embed">@strongerz123</a>
-            𝑮𝒓𝒆𝒆𝒕𝒊𝒏𝒈𝒔, 𝑲𝒊𝒏𝒈𝒔 𝑨𝒏𝒅 𝑸𝒖𝒆𝒆𝒏𝒔. HAPPY BIRTHDAY TO YOU!
-            <a title="happybirthday" target="_blank" href="https://www.tiktok.com/tag/happybirthday?refer=embed">#happybirthday</a>
-            <a title="song" target="_blank" href="https://www.tiktok.com/tag/song?refer=embed">#song</a>
-            <a title="singing" target="_blank" href="https://www.tiktok.com/tag/singing?refer=embed">#singing</a>
-            <a title="funny" target="_blank" href="https://www.tiktok.com/tag/funny?refer=embed">#funny</a>
-            <a title="happybirthdaytoyou" target="_blank" href="https://www.tiktok.com/tag/happybirthdaytoyou?refer=embed">#happybirthdaytoyou</a>
-            <a target="_blank" title="♬ original sound - Jason.JaySmooth.@strongy2014."
-               href="https://www.tiktok.com/music/original-sound-7099477236189514501?refer=embed">♬ original sound - Jason.JaySmooth.@strongy2014.</a>
-          </section> </blockquote>
+        <p class="text-notice-mobile">Mở bằng Laptop em nhé</p>
       </div>
     </div>
     <div v-else>
-      Main
+      <div v-show="!love" class="loading">
+        <div class="boxHeartImg">
+          <div class="heartItem item1">
+            <img src="@/assets/heart.png" alt="">
+          </div>
+          <div class="heartItem item2">
+            <img src="@/assets/heart.png" alt="">
+          </div>
+          <div class="heartItem item3">
+            <img src="@/assets/heart.png" alt="">
+          </div>
+        </div>
+        <div class="heartBox">
+          <div class="heart"></div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress" :style="{ width: percentWidth + '%' }"></div>
+          <div class="percent">{{ count }}</div>
+        </div>
+        <h2 class="textBox">
+          <span class="textLoad">loading love</span>
+          <span class="cricle1">.</span>
+          <span class="cricle2">.</span>
+          <span class="cricle3">.</span>
+        </h2>
+        <div class="buttonCLick">
+          <img src="@/assets/cursor.png" alt="">
+          <div class="button" @click="navigateToLovePage">
+            <p class="textBtn">{{ buttonText }}</p>
+          </div>
+        </div>
+      </div>
+      <div v-if="love">
+        <Love :love="love" @showLetter="showLetter"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import CountDown from "@/components/CountDown.vue";
-
+import Love from "@/components/Love.vue";
 export default {
   name: "App",
-  components: {CountDown},
+  components: {Love, CountDown},
   data() {
     return {
       isMobile: false,
       expired: false,
-      audio: null,
-      audioPlaying: false,
-      audioFile: require('@/assets/media/HappyBirthdayRemix-DJ-4052574.mp3')
-
+      count: 0,
+      percentWidth: 0,
+      heartLeft: -3.2,
+      buttonTransform: '',
+      buttonBackground: '',
+      buttonWidth: '',
+      buttonBorderRadius: '',
+      buttonHeight: '',
+      buttonText: '',
+      cursorOpacity: 0,
+      progressLoad: null,
+      love: false,
+      showLetters: false,
     };
   },
   mounted() {
@@ -86,21 +101,85 @@ export default {
     window.removeEventListener('resize', this.checkMobile);
   },
   methods: {
-    toggleAudio() {
-      if (!this.audio) {
-        this.audio = new Audio(require('@/assets/media/HappyBirthdayRemix-DJ-4052574.mp3'));
-        this.audio.onended = () => {
-          this.audioPlaying = false;
-        };
-      }
+    showLetter(value) {
+      this.showLetters = value
+    },
+    progressInterval() {
+      if (this.count === 100 && this.percentWidth === 100) {
+        clearInterval(this.progressLoad);
+        const percent = document.querySelector(".percent");
+        percent.style.letterSpacing = "1px";
 
-      if (this.audioPlaying) {
-        this.audio.pause();
+        const textBox = document.querySelector(".textBox");
+        textBox.style.transform = "scale(1.3)"
+
+        const heartItem3 = document.querySelector(".heartItem.item3")
+        heartItem3.style.animation = "1s heartScale forwards"
+
+        const button = document.querySelector(".button");
+
+        setTimeout(()=>{
+          textBox.style.transform = "scale(0)"
+        },400)
+        setTimeout(()=>{
+          textBox.style.opacity = "0"
+        },600)
+        setTimeout(()=>{
+          button.style.transform= "scale(1)";
+        },800);
+        setTimeout(()=>{
+          button.style.background = "rgb(244,118,121)"
+          button.style.width = "130px";
+          button.style.borderRadius = "20px"
+        },1500)
+        setTimeout(()=>{
+          button.style.height = "40px";
+        },2000)
+
+        const textBtn = document.querySelector(".textBtn");
+
+        setTimeout(()=>{
+          textBtn.textContent = "Click me!"
+          textBtn.style.color = "#fff"
+        },2500)
+
+        const cursor = document.querySelector(".buttonCLick img");
+        setTimeout(()=>{
+          cursor.style.opacity = "1";
+        },3000)
       } else {
-        this.audio.play();
-      }
+        const heartItem1 = document.querySelector(".heartItem.item1");
+        const heartItem2 = document.querySelector(".heartItem.item2");
+        const progress = document.querySelector(".progress");
+        const percent = document.querySelector(".percent");
+        const heartBox = document.querySelector(".heartBox");
 
-      this.audioPlaying = !this.audioPlaying;
+        if(this.count == 10){
+          heartItem1.style.animation = "1s heartScale forwards"
+        }
+        if(this.count ==46){
+          percent.style.color= "#fff"
+        }
+        if(this.count == 60){
+          heartItem2.style.animation = "1s heartScale forwards"
+        }
+        this.count += 1;
+        this.percentWidth += 1;
+        this.heartLeft += 0.968;
+        progress.style.width = this.percentWidth + '%'
+        percent.innerText = this.count + '%'
+        heartBox.style.left = this.heartLeft + '%'
+      }
+    },
+    navigateToLovePage() {
+      this.buttonTransform = 'scale(0.8)';
+      setTimeout(() => {
+        this.buttonTransform = 'scale(1)';
+        document.body.classList.remove('before');
+        document.body.classList.remove('after');
+
+        this.love = true
+      }, 200);
     },
     checkMobile() {
       this.isMobile = window.innerWidth <= 768;
@@ -108,25 +187,32 @@ export default {
     timeRemaining(time) {
       if (time === 0) {
         this.expired = true
-        console.log('1234')
-      }
-    },
-    playing() {
-      const audioElement = this.$el.querySelector('.audio-class');
-      if (audioElement) {
-        audioElement.classList.add('hidden');
-      }
-    },
-    end() {
-      const audioElement = this.$el.querySelector('.audio-class');
-      if (audioElement) {
-        audioElement.classList.remove('hidden');
+        document.body.classList.remove('before');
+        document.body.classList.add('after');
+        this.progressLoad = setInterval(this.progressInterval, 100);
+      } else {
+        document.body.classList.remove('after');
+        document.body.classList.add('before');
       }
     }
   }
 };
 </script>
 <style lang="scss">
+.before {
+  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 100, color-stop(0%, #374566), color-stop(100%, #010203));
+  background-image: -webkit-radial-gradient(#374566, #010203);
+  background-image: -moz-radial-gradient(#374566, #010203);
+  background-image: -o-radial-gradient(#374566, #010203);
+  background-image: radial-gradient(#374566, #010203);
+}
+.after {
+  background: rgb(255, 218, 232);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 .fade-out-collapse {
   opacity: 1;
   max-height: 1000px; /* A large value, so it doesn't affect element's height */
